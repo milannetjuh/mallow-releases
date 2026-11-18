@@ -13,6 +13,8 @@
 <p align="center">
   <a href="../../releases/latest"><img src="https://img.shields.io/badge/download_for_windows-e04a2f?style=for-the-badge&logo=windows&logoColor=white" alt="download for windows"></a>
   &nbsp;
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/download_for_mac-e04a2f?style=for-the-badge&logo=apple&logoColor=white" alt="download for mac"></a>
+  &nbsp;
   <a href="../../releases"><img src="https://img.shields.io/github/v/release/milannetjuh/mallow-releases?style=for-the-badge&label=latest&color=232120" alt="latest version"></a>
 </p>
 
@@ -132,7 +134,7 @@ new versions download quietly and install the next time it restarts.
 
 | | |
 |---|---|
-| <kbd>ctrl</kbd>+<kbd>space</kbd> | open or close mallow |
+| <kbd>ctrl</kbd>+<kbd>space</kbd> (mac: <kbd>⌥</kbd>+<kbd>space</kbd>) | open or close mallow |
 | drag · click · right-click | circle something · mark a spot · wipe your marks |
 | <kbd>ctrl</kbd>+<kbd>z</kbd> | take back your last mark |
 | <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>→</kbd> / <kbd>←</kbd> | next / previous message, from any app |
@@ -141,15 +143,19 @@ new versions download quietly and install the next time it restarts.
 | <kbd>ctrl</kbd>+<kbd>,</kbd> | settings |
 | <kbd>esc</kbd> | close |
 
+on a mac, <kbd>⌘</kbd> takes the place of <kbd>ctrl</kbd> inside mallow (<kbd>⌘</kbd>+<kbd>z</kbd>, <kbd>⌘</kbd>+<kbd>c</kbd>, <kbd>⌘</kbd>+<kbd>h</kbd>, <kbd>⌘</kbd>+<kbd>,</kbd>).
+
 <br>
 
 ## get started
 
-1. **[download mallow](../../releases/latest)** and run `mallow-setup-x.y.z.exe`. it installs just for you, no admin rights needed.
+1. **[download mallow](../../releases/latest)**.
+   - **windows**: run `mallow-setup-x.y.z.exe`. it installs just for you, no admin rights needed.
+   - **mac**: open `mallow-x.y.z-mac-arm64.dmg` (apple silicon: m1 and newer) or `mac-x64` (intel) and drag mallow to applications. it isn't signed yet, so the first time, right-click it and pick **open** (or system settings › privacy & security › **open anyway**). setup asks for screen recording; turn mallow on there and let it reopen.
 2. the setup window does the rest: it installs claude code if you don't have it yet and signs you in with your own claude account. be signed in to claude.ai in your browser first and it's one click.
-3. do the 20-second practice round, then press <kbd>ctrl</kbd>+<kbd>space</kbd> whenever you want a hand.
+3. do the 20-second practice round, then press <kbd>ctrl</kbd>+<kbd>space</kbd> (mac: <kbd>⌥</kbd>+<kbd>space</kbd>) whenever you want a hand.
 
-**you need** windows 10 or 11 and a **claude pro or max** plan. mallow runs on your own plan through claude code: no api key, nothing extra to pay.
+**you need** windows 10 or 11, or a mac with macos 12 or newer, and a **claude pro or max** plan. mallow runs on your own plan through claude code: no api key, nothing extra to pay.
 
 <br>
 
@@ -159,7 +165,7 @@ new versions download quietly and install the next time it restarts.
 - it's invisible to screen capture, so it never shows up in its own screenshots, your screen shares or your recordings.
 - while it waits for you in a walkthrough, it compares tiny grey copies of your screen **on your computer**. they're never saved or sent.
 - copied text is only sent when you pick an action, and single words like passwords are never offered.
-- no accounts, no analytics. your settings and history stay in your windows profile.
+- no accounts, no analytics. your settings and history stay in your own user profile.
 
 <br>
 
