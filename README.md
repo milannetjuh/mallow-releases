@@ -122,7 +122,7 @@ one ongoing conversation, so a follow-up an hour later still makes sense.
 works across all your monitors and points at things on any of them.
 
 **keeps itself up to date**<br>
-new versions download quietly and install the next time it restarts.
+new versions download quietly and install the next time it restarts. on a mac, mallow tells you when one is out and opens its download.
 
 </td>
 </tr>
