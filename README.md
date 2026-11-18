@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img src="media/hero.gif" width="100%" alt="an export dialog shows an error. the user presses ctrl+space, circles the error and asks why the export failed. mallow, a small white marshmallow, underlines the error, then circles the embed profile switch in red pencil and says to turn it on.">
+  <img src="media/hero.webp" width="100%" alt="in windows' power options, the user circles the list of power plans and asks what they do. mallow boxes each plan in red pencil and explains it in a short note beside it.">
 </p>
 
 <table>
@@ -41,7 +41,7 @@ no copying error messages into a chat window. no describing where things are. yo
 ## it walks you through it
 
 <p align="center">
-  <img src="media/walk.gif" width="100%" alt="in settings, mallow spotlights personalisation and waits. when the user clicks it and the page changes, mallow circles the dark option with a label saying this one. after the user picks it, mallow ticks it and says that's it.">
+  <img src="media/walk.webp" width="100%" alt="in paint, the user asks how to resize an image. mallow circles the resize button and waits; when the dialog opens it guides them to 200%, ticks it, and confirms the new size with a magnifier.">
 </p>
 
 ask how to do something and you get **one step at a time**. mallow spotlights where to click, then waits. once you've done it, it notices on its own and shows the next step, pointing at where things are *now*. **i did it** and **stop** are there when you want them.
@@ -51,7 +51,7 @@ ask how to do something and you get **one step at a time**. mallow spotlights wh
 ## do something with what you copied
 
 <p align="center">
-  <img src="media/copy.gif" width="100%" alt="the user copies a dutch sentence from an email. when they open mallow, buttons slide up offering explain, summarize, translate and rewrite. they pick translate and the english appears in a card.">
+  <img src="media/copy.webp" width="100%" alt="on a french wikipedia page, the user copies a sentence and opens mallow. buttons slide up offering explain, summarize, translate and rewrite; they pick translate and the english appears in a card.">
 </p>
 
 copy some text, press the shortcut, and mallow offers to **explain**, **summarize**, **translate** or **rewrite** it. one click, no typing. it only offers: nothing is sent until you pick.
@@ -61,7 +61,7 @@ copy some text, press the shortcut, and mallow offers to **explain**, **summariz
 ## it shows you, it doesn't just tell you
 
 <p align="center">
-  <img src="media/markups.gif" width="100%" alt="on a shop dashboard, mallow puts numbered red badges on three tiles to show what to look at first, labels two icons print and export, ticks the orders tile and crosses out the returns figure.">
+  <img src="media/markups.webp" width="100%" alt="on a wikipedia page, mallow spotlights the opening paragraph, boxes the infobox, and puts numbered badges on the contents to show what to read first.">
 </p>
 
 mallow draws right on your screen, in a hand-drawn red pencil that fades when you move on.
@@ -82,7 +82,7 @@ mallow draws right on your screen, in a hand-drawn red pencil that fades when yo
 ## make it yours
 
 <p align="center">
-  <img src="media/settings.gif" width="100%" alt="the user clicks mallow's face at the left of the bar and a narrow rail of icons springs out. hovering an icon peeks its setting. clicking model opens opus, sonnet and haiku, and they pick sonnet.">
+  <img src="media/settings.webp" width="100%" alt="the user clicks mallow's face at the left of the bar and a narrow rail of icons springs out. hovering an icon peeks its setting, then they change mallow's look.">
 </p>
 
 click mallow's face at the left of the bar (or press <kbd>ctrl</kbd>+<kbd>,</kbd>) and settings spring out: which claude model, your shortcut, how long answers are, mallow's look, reading answers aloud and starting with windows.
