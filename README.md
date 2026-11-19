@@ -81,13 +81,21 @@ mallow draws right on your screen, in a hand-drawn red pencil that fades when yo
 
 <br>
 
+## it learns how you work
+
+mallow knows which app you're in and tunes itself to it. in vs code it's in **coding** mode: short answers with the fix first, the file and the line. in figma it's **design**: sizes, hex codes and your client's brand rules. in excel it's **sheets**: plain words and a formula ready to insert. writing and mail get text ready to paste.
+
+it also learns what *you* ask in each app, so the suggestions when the bar opens become your own questions there. a small chip in the bar shows the mode; **settings › how you work** shows what mallow picked up per app, and lets you change a mode, add a preference ("short, fix first") or forget an app. only counts and short preferences are kept, on your computer.
+
+<br>
+
 ## make it yours
 
 <p align="center">
   <img src="media/settings.webp" width="100%" alt="the user clicks mallow's face at the left of the bar and a narrow rail of icons springs out. hovering an icon peeks its setting, then they change mallow's look.">
 </p>
 
-click mallow's face at the left of the bar (or press <kbd>ctrl</kbd>+<kbd>,</kbd>) and settings spring out: which claude model, your shortcut, how long answers are, mallow's look, reading answers aloud and starting with windows.
+click mallow's face at the left of the bar (or press <kbd>ctrl</kbd>+<kbd>,</kbd>) and settings spring out: which claude model, your shortcut, how long answers are, mallow's look, how you work, reading answers aloud, its little sounds and starting with windows.
 
 <br>
 
@@ -152,8 +160,8 @@ on a mac, <kbd>⌘</kbd> takes the place of <kbd>ctrl</kbd> inside mallow (<kbd>
 1. **[download mallow](../../releases/latest)**.
    - **windows**: run `mallow-setup-x.y.z.exe`. it installs just for you, no admin rights needed.
    - **mac**: open `mallow-x.y.z-mac-arm64.dmg` (apple silicon: m1 and newer) or `mac-x64` (intel) and drag mallow to applications. it isn't signed yet, so the first time, right-click it and pick **open** (or system settings › privacy & security › **open anyway**). setup asks for screen recording; turn mallow on there and let it reopen.
-2. the setup window does the rest: it installs claude code if you don't have it yet and signs you in with your own claude account. be signed in to claude.ai in your browser first and it's one click.
-3. do the 20-second practice round, then press <kbd>ctrl</kbd>+<kbd>space</kbd> (mac: <kbd>⌥</kbd>+<kbd>space</kbd>) whenever you want a hand.
+2. mallow pops up where its bar lives and asks what you mostly do (coding, design, sheets, writing, mail or a bit of everything). if claude code or your claude account is missing, it sets them up right there: it installs claude code and signs you in with your own claude account (be signed in to claude.ai in your browser first and it's one click).
+3. it puts a little example from your kind of work on screen: press <kbd>ctrl</kbd>+<kbd>space</kbd> (mac: <kbd>⌥</kbd>+<kbd>space</kbd>), circle it and ask. that's it; press the same keys whenever you want a hand.
 
 **you need** windows 10 or 11, or a mac with macos 12 or newer, and a **claude pro or max** plan. mallow runs on your own plan through claude code: no api key, nothing extra to pay.
 
