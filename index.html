@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mallow, a little help right where you're looking</title>
+<meta name="description" content="Press a shortcut in any app, circle what's confusing and ask. mallow answers in a short note beside it and marks the answer on your screen. For Windows and Mac, on your own Claude plan.">
+<meta property="og:title" content="mallow">
+<meta property="og:description" content="Press a shortcut in any app, circle what's confusing and ask. mallow answers right beside it.">
+<meta property="og:image" content="https://getmallow.me/assets/video/hero-plate.jpg">
+<meta property="og:url" content="https://getmallow.me/">
+<meta name="theme-color" content="#e4e2de" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1a19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/icon.png">
+<link rel="preload" href="assets/fonts/SchibstedGrotesk.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face { font-family: "Schibsted Grotesk"; src: url("assets/fonts/SchibstedGrotesk.ttf") format("truetype"); font-weight: 400 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "Schibsted Grotesk"; src: url("assets/fonts/SchibstedGrotesk-Italic.ttf") format("truetype"); font-weight: 400 900; font-style: italic; font-display: swap; }
+
+:root {
+  /* the app's own palette: warm light grey cloth, white paper, graphite ink, pencil red */
+  --cloth: #e4e2de;
+  --cloth-ink: #232120;
+  --cloth-ink-2: #5b5752;
+  --page: #ffffff;
+  --page-edge: #ebe8e3;
+  --ink: #232120;
+  --ink-2: #5b5752;
+  --ink-3: #75706a;
+  --rule: rgba(35, 33, 32, 0.12);
+  --accent: #c4401f;
+  --accent-ink: #ffffff;
+  --accent-text: #b8371f;
+  --gutter: rgba(35, 33, 32, 0.12);
+  --raised: #f4f2ef;
+  --dot-fill: #ffffff;
+  --lift: rgba(60, 45, 30, 0.22);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cloth: #1c1a19; --cloth-ink: #f3efea; --cloth-ink-2: #b3aca4;
+    --page: #2a2725; --page-edge: #201e1c; --ink: #f3efea; --ink-2: #cbc4bc; --ink-3: #a39b92;
+    --rule: rgba(255, 248, 240, 0.12); --accent: #ef5a3c; --accent-ink: #1c1a19; --accent-text: #ff8f74;
+    --gutter: rgba(0, 0, 0, 0.5); --raised: #36322e; --dot-fill: #2a2725; --lift: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+    --cloth: #1c1a19; --cloth-ink: #f3efea; --cloth-ink-2: #b3aca4;
+    --page: #2a2725; --page-edge: #201e1c; --ink: #f3efea; --ink-2: #cbc4bc; --ink-3: #a39b92;
+    --rule: rgba(255, 248, 240, 0.12); --accent: #ef5a3c; --accent-ink: #1c1a19; --accent-text: #ff8f74;
+    --gutter: rgba(0, 0, 0, 0.5); --raised: #36322e; --dot-fill: #2a2725; --lift: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--cloth-ink-2) var(--cloth); }
+body {
+  margin: 0;
+  background-color: var(--cloth);
+  /* bookcloth: a woven grain tile over the light grey */
+  background-image: url("assets/cloth.png");
+  background-size: 160px 160px;
+  color: var(--ink);
+  font-family: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif; font-size: 18px; font-weight: 400; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  caret-color: var(--accent);
+}
+::selection { background: color-mix(in srgb, var(--accent) 26%, transparent); color: inherit; }
+img, video { display: block; max-width: 100%; }
+a { color: var(--accent-text); text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+p { margin: 0 0 1em; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+ol, ul { margin: 0; padding: 0; }
+
+.keys { white-space: nowrap; }
+kbd {
+  display: inline-block; min-width: 1.75em; padding: 0.05em 0.45em 0.1em;
+  border: 1px solid var(--rule); border-bottom-width: 2.5px; border-radius: 6px;
+  background: var(--page); color: var(--ink);
+  font-family: "Schibsted Grotesk", system-ui, sans-serif; font-size: 0.82em; font-weight: 600; line-height: 1.35; text-align: center; white-space: nowrap;
+  vertical-align: 0.06em;
+}
+
+/* ---------- the cloth bar ---------- */
+.top { max-width: 1400px; margin: 0 auto; padding: 22px 32px 18px; display: flex; align-items: center; gap: 32px; color: var(--cloth-ink); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--cloth-ink); text-decoration: none; font-weight: 800; font-size: 21px; letter-spacing: -0.02em; }
+.brand img { width: 30px; height: 30px; border-radius: 7px; }
+.top nav { display: flex; gap: 26px; margin-left: auto; }
+.top nav a { color: var(--cloth-ink-2); text-decoration: none; font-weight: 500; font-size: 15.5px; }
+.top nav a:hover { color: var(--cloth-ink); }
+.top .get { color: var(--cloth); background: var(--cloth-ink); text-decoration: none; font-weight: 700; font-size: 15px; padding: 9px 16px; border-radius: 8px; }
+.top .get:hover { background: color-mix(in srgb, var(--cloth-ink) 84%, var(--cloth)); }
+
+/* ---------- the book: spreads of two pages on one gutter ---------- */
+.book { max-width: 1400px; margin: 0 auto; padding: 0 32px 72px; display: grid; gap: 40px; }
+.spread {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--page);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--page-edge), 0 2px 0 rgba(0, 0, 0, 0.06), 0 3px 0 var(--page-edge), 0 24px 48px -24px var(--lift);
+  position: relative;
+}
+.spread::before { /* the gutter */
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 64px; transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, var(--gutter) 48%, rgba(0, 0, 0, 0.05) 50%, var(--gutter) 52%, transparent);
+  opacity: 0.5; pointer-events: none;
+}
+.spread.lead { grid-template-columns: 5fr 7fr; }
+.spread.lead::before { left: 41.667%; }
+.spread.lead .pg.l { padding-right: 40px; }
+.spread.lead h1 { font-size: clamp(42px, 4vw, 60px); }
+.pg { padding: 56px 64px 64px; min-width: 0; position: relative; }
+.pg.l { padding-right: 72px; }
+.pg.r { padding-left: 72px; }
+.folio { position: absolute; bottom: 22px; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.pg.l .folio { left: 64px; }
+.pg.r .folio { right: 64px; }
+
+h1 { font-size: clamp(44px, 4.7vw, 70px); line-height: 0.98; letter-spacing: -0.035em; font-weight: 850; margin-bottom: 22px; }
+.ident { font-style: italic; font-size: 21px; color: var(--ink-2); margin-bottom: 26px; }
+.lede { font-size: 19px; color: var(--ink-2); max-width: 31em; margin-bottom: 34px; text-wrap: pretty; }
+h2 { font-size: clamp(32px, 3.2vw, 44px); line-height: 1.04; letter-spacing: -0.028em; font-weight: 800; margin-bottom: 18px; }
+h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.005em; margin-bottom: 4px; }
+.pg p { color: var(--ink-2); max-width: 34em; }
+.pg strong { color: var(--ink); font-weight: 650; }
+
+.dl {
+  display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px;
+  background: var(--accent); color: var(--accent-ink); border-radius: 10px;
+  font-family: "Schibsted Grotesk", system-ui, sans-serif; font-size: 17px; font-weight: 700; line-height: 1; text-decoration: none;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 8px 16px -10px rgba(20, 16, 10, 0.55);
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 160ms;
+}
+.dl:hover { transform: translateY(-1px); text-decoration: none; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 12px 20px -10px rgba(20, 16, 10, 0.6); }
+.dl:active { transform: translateY(1px); }
+.dl svg { width: 19px; height: 19px; }
+.plan { margin-top: 18px; font-size: 15px; color: var(--ink-3); max-width: 30em; }
+.plan a { color: var(--ink-2); }
+
+/* ---------- plates: a real screen with its parts named ---------- */
+.plate { margin: 0; position: relative; --band: 64px; padding: var(--band) 0 0; }
+.plate .cap { margin-top: calc(var(--band) + 6px); }
+.plate.nobottom .cap { margin-top: 14px; }
+.frame { position: relative; aspect-ratio: 912 / 556; background: var(--raised); box-shadow: 0 0 0 1px var(--rule); overflow: hidden; }
+.frame img, .frame video { width: 100%; height: 100%; object-fit: cover; }
+.frame video { position: absolute; inset: 0; opacity: 0; transition: opacity 240ms; }
+.plate.playing .frame video { opacity: 1; }
+.marks { list-style: none; }
+.marks li {
+  position: absolute; max-width: 168px; font-size: 13.5px; line-height: 1.3; font-weight: 600; color: var(--ink);
+  transition: opacity 240ms;
+}
+.marks li[data-side="top"] { top: 0; }
+.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.leaders line { stroke: var(--ink); stroke-width: 1.25; stroke-dasharray: var(--len); stroke-dashoffset: 0; transition: opacity 240ms; }
+.leaders circle.ring { fill: var(--dot-fill); stroke: var(--ink); stroke-width: 1.5; }
+.leaders circle.core { fill: var(--ink); }
+.js .plate:not(.drawn) .leaders line { stroke-dashoffset: var(--len); }
+.js .plate:not(.drawn) .leaders circle { opacity: 0; }
+.js .plate:not(.drawn) .marks li { opacity: 0; }
+.js .plate.drawn .leaders line { transition: stroke-dashoffset 640ms cubic-bezier(0.22, 1, 0.36, 1) var(--d), opacity 240ms; }
+.js .plate.drawn .leaders circle { transition: opacity 200ms var(--d2); }
+.js .plate.drawn .marks li { transition: opacity 260ms var(--d2); }
+.plate.playing .marks li, .plate.playing .leaders { opacity: 0; }
+.marks li.lit { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.pin { display: none; }
+.cap { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 14px; font-size: 14px; color: var(--ink-3); }
+.watch {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--page); color: var(--ink); font-family: "Schibsted Grotesk", system-ui, sans-serif; font-size: 14px; font-weight: 600; line-height: 1; cursor: pointer;
+}
+.watch:hover { border-color: var(--ink-3); }
+.watch svg { width: 12px; height: 12px; }
+
+/* ---------- lists of a guide ---------- */
+.steps { list-style: none; counter-reset: s; display: grid; gap: 22px; margin: 28px 0 0; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr; align-items: baseline; }
+.steps li::before { content: counter(s); font-size: 28px; font-weight: 800; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.steps p { margin: 0; }
+
+.marklist { display: grid; grid-template-columns: max-content 1fr; gap: 10px 22px; margin: 26px 0 0; font-size: 16.5px; }
+.marklist dt { font-weight: 700; color: var(--ink); }
+.marklist dd { margin: 0; color: var(--ink-2); }
+
+/* the key: a dichotomous key, as in a field guide */
+.key { list-style: none; margin: 8px 0 0; font-size: 16.5px; }
+.key li { display: grid; grid-template-columns: 34px 1fr auto; gap: 0 10px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.key li:first-child { border-top: 1px solid var(--rule); }
+.key .n { font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.key .q { color: var(--ink-2); }
+.key .to { font-weight: 700; color: var(--ink); text-align: right; white-space: nowrap; }
+.key .to em { font-style: italic; font-weight: 500; color: var(--ink-2); }
+.key .says { grid-column: 2 / 4; font-size: 15px; color: var(--ink-3); margin-top: 2px; }
+
+.index { columns: 2; column-gap: 40px; margin-top: 22px; }
+.index div { break-inside: avoid; margin-bottom: 18px; font-size: 15.5px; line-height: 1.45; }
+.index b { display: block; font-weight: 700; font-size: 16.5px; margin-bottom: 2px; }
+.index span { color: var(--ink-2); }
+
+.privacy { list-style: none; display: grid; gap: 16px; margin-top: 24px; }
+.privacy li { color: var(--ink-2); }
+.privacy b { color: var(--ink); font-weight: 650; }
+
+.start { list-style: none; counter-reset: s; display: grid; gap: 16px; margin: 22px 0 0; }
+.start li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; color: var(--ink-2); }
+.start li::before { content: counter(s); font-weight: 800; color: var(--ink); }
+.start b { color: var(--ink); }
+.need { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 16px; color: var(--ink-2); }
+.need b { color: var(--ink); }
+
+details { border-bottom: 1px solid var(--rule); }
+details:first-of-type { border-top: 1px solid var(--rule); margin-top: 22px; }
+summary { cursor: pointer; padding: 15px 34px 15px 0; font-weight: 650; list-style: none; position: relative; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: ""; position: absolute; right: 6px; top: 24px; width: 8px; height: 8px; border-right: 1.75px solid var(--ink-3); border-bottom: 1.75px solid var(--ink-3); transform: rotate(45deg); transition: transform 200ms; }
+details[open] summary::after { transform: rotate(-135deg); top: 28px; }
+details p { font-size: 16px; padding-right: 24px; }
+
+/* ---------- the back cover ---------- */
+.back { text-align: center; color: var(--cloth-ink); padding: 72px 32px 40px; }
+.back img { width: 84px; height: 84px; margin: 0 auto 26px; border-radius: 20px; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15), 0 14px 28px -12px rgba(0, 0, 0, 0.5); }
+.back h2 { color: var(--cloth-ink); font-size: clamp(34px, 4vw, 52px); margin-bottom: 28px; }
+.back .dl { box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25), 0 10px 22px -12px rgba(0, 0, 0, 0.6); }
+.back .ver { margin-top: 16px; font-size: 14px; color: var(--cloth-ink-2); }
+footer { max-width: 1400px; margin: 0 auto; padding: 24px 32px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 14px; color: var(--cloth-ink-2); }
+footer a { color: var(--cloth-ink); }
+
+/* ---------- narrower screens ---------- */
+@media (max-width: 1080px) {
+  .spread, .spread.lead { grid-template-columns: minmax(0, 1fr); }
+  .spread::before { display: none; }
+  .pg, .pg.l, .pg.r { padding: 44px 40px 52px; }
+  .pg + .pg { border-top: 1px dashed var(--rule); }
+  .pg.r .folio { right: 40px; } .pg.l .folio { left: 40px; }
+}
+@media (max-width: 720px) {
+  body { font-size: 17px; }
+  .top { padding: 16px 16px 14px; gap: 16px; }
+  .top nav { display: none; }
+  .top .get { margin-left: auto; }
+  .book { padding: 0 10px 48px; gap: 24px; }
+  .pg, .pg.l, .pg.r { padding: 32px 20px 44px; }
+  .pg.r .folio { right: 20px; } .pg.l .folio { left: 20px; }
+  h1 { font-size: 44px; }
+  .ident { font-size: 19px; }
+  .lede { font-size: 17.5px; }
+  .dl { width: 100%; justify-content: center; }
+  /* plates: numbered pins on the screen, a numbered legend under it */
+  .plate { padding: 0; }
+  .plate .cap { margin-top: 16px; }
+  .leaders { display: none; }
+  .marks { counter-reset: m; display: grid; gap: 6px; margin-top: 14px; }
+  .marks li { position: static; max-width: none; opacity: 1 !important; counter-increment: m; display: grid; grid-template-columns: 26px 1fr; font-weight: 500; color: var(--ink-2); }
+  .marks li::before { content: counter(m); font-weight: 800; color: var(--ink); }
+  .pin { display: grid; place-items: center; position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: var(--ink); color: var(--page); font-size: 12px; font-weight: 800; box-shadow: 0 0 0 2px var(--page); }
+  .plate.playing .pin { opacity: 0; }
+  .marklist { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .marklist dd { margin-bottom: 10px; }
+  .index { columns: 1; }
+  .key li { grid-template-columns: 28px 1fr; }
+  .key .to { grid-column: 2; text-align: left; }
+  .key .says { grid-column: 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .plate .leaders line, .js .plate .leaders circle, .js .plate .marks li { transition: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; }
+  .dl { transition: none; }
+}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="30" height="30">mallow</a>
+  <nav aria-label="Sections">
+    <a href="#how">how it works</a>
+    <a href="#privacy">privacy</a>
+    <a href="#start">get started</a>
+  </nav>
+  <a class="get dl-link" href="https://github.com/milannetjuh/mallow-releases/releases/latest">download</a>
+</header>
+
+<main class="book">
+  <section class="spread lead" aria-labelledby="t-hero">
+    <div class="pg l">
+      <h1 id="t-hero">a little help, right where you're looking.</h1>
+      <p class="ident">mallow, a desktop helper for windows and mac</p>
+      <p class="lede">press <span class="keys"><kbd>ctrl</kbd> <kbd>space</kbd></span> in any app, circle what's confusing and ask. mallow answers in a short note right beside it, and marks the answer on your screen.</p>
+      <a class="dl dl-link" id="primary" href="https://github.com/milannetjuh/mallow-releases/releases/latest">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11.5m0 0-4.6-4.6M12 15l4.6-4.6M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="dl-label">download mallow</span>
+      </a>
+      <p class="plan" id="plan">free. it runs on your own claude pro or max plan, so there's no api key and nothing extra to pay.</p>
+      <span class="folio">1</span>
+    </div>
+    <div class="pg r">
+      <figure class="plate" data-video="assets/video/hero.mp4">
+        <div class="frame"><img src="assets/video/hero-plate.jpg" alt="Windows power options. The user has circled the list of power plans; mallow has boxed the Balanced plan and explains it in a note beside the cursor." width="912" height="556"></div>
+        <ol class="marks">
+          <li data-x="10.5" data-y="38" data-side="top">your circle around what you mean</li>
+          <li data-x="61.8" data-y="17" data-side="top">mallow's box on the answer</li>
+          <li data-x="96.5" data-y="37" data-side="top">its note, beside your cursor</li>
+          <li data-x="44" data-y="87.5" data-side="bottom">questions you might ask next</li>
+          <li data-x="71" data-y="95" data-side="bottom">the bar at the bottom of your screen</li>
+        </ol>
+        <svg class="leaders" aria-hidden="true"></svg>
+        <figcaption class="cap"><span>asking about windows' power plans</span><button class="watch" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg><span>watch it</span></button></figcaption>
+      </figure>
+      <span class="folio">2</span>
+    </div>
+  </section>
+
+  <section class="spread" id="how" aria-labelledby="t-how">
+    <div class="pg l">
+      <h2 id="t-how">press, point, ask.</h2>
+      <p>no window to switch to and nothing to describe. mallow already sees what you see.</p>
+      <ol class="steps">
+        <li><div><h3>press <span class="keys"><kbd>ctrl</kbd> <kbd>space</kbd></span></h3><p>anywhere, in any app. on a mac it's <span class="keys"><kbd>⌥</kbd> <kbd>space</kbd></span>.</p></div></li>
+        <li><div><h3>circle what you mean</h3><p>drag around it, click a spot, or just start typing.</p></div></li>
+        <li><div><h3>ask in plain words</h3><p>mallow answers beside it and marks the answer on screen. how-to questions come <strong>one step at a time</strong>: it waits, notices when you've done the step, and points at the next one.</p></div></li>
+      </ol>
+      <span class="folio">3</span>
+    </div>
+    <div class="pg r">
+      <figure class="plate" data-video="assets/video/walk.mp4">
+        <div class="frame"><img src="assets/video/walk-plate.jpg" alt="Paint's resize dialog. mallow has boxed the horizontal size field and says to change 100 to 200; this is step 2 of 2." width="912" height="556"></div>
+        <ol class="marks">
+          <li data-x="40.8" data-y="45" data-side="top">the field to change, boxed</li>
+          <li data-x="86.6" data-y="57.5" data-side="top">what to type, in plain words</li>
+          <li data-x="69" data-y="59" data-side="bottom">step 2 of 2</li>
+        </ol>
+        <svg class="leaders" aria-hidden="true"></svg>
+        <figcaption class="cap"><span>resizing an image in paint, step by step</span><button class="watch" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg><span>watch it</span></button></figcaption>
+      </figure>
+      <span class="folio">4</span>
+    </div>
+  </section>
+
+  <section class="spread" aria-labelledby="t-marks">
+    <div class="pg l">
+      <figure class="plate" data-video="assets/video/markups.mp4">
+        <div class="frame"><img src="assets/video/markups-plate.jpg" alt="A Wikipedia article about Windows. mallow has boxed the infobox and explains in a note that it holds the quick facts." width="912" height="556"></div>
+        <ol class="marks">
+          <li data-x="31.9" data-y="30" data-side="top">a box on the part that matters</li>
+          <li data-x="65.2" data-y="85.4" data-side="bottom">mallow, right next to it</li>
+          <li data-x="88" data-y="94" data-side="bottom">what it is, in one line</li>
+        </ol>
+        <svg class="leaders" aria-hidden="true"></svg>
+        <figcaption class="cap"><span>where to start on a long wikipedia page</span><button class="watch" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg><span>watch it</span></button></figcaption>
+      </figure>
+      <span class="folio">5</span>
+    </div>
+    <div class="pg r">
+      <h2 id="t-marks">it shows you where.</h2>
+      <p>answers come with marks drawn right on your screen. they fade when you move on, or stay if you pin them.</p>
+      <dl class="marklist">
+        <dt>circles and boxes</dt><dd>the thing it's talking about</dd>
+        <dt>arrows</dt><dd>which way to go</dd>
+        <dt>highlighter</dt><dd>under the line that matters</dd>
+        <dt>spotlight</dt><dd>dims everything else</dd>
+        <dt>numbered badges</dt><dd>what to do first, second, third</dd>
+        <dt>labels</dt><dd>names icons that have none</dd>
+        <dt>ticks and crosses</dt><dd>this one's right, that one isn't</dd>
+        <dt>magnifier</dt><dd>a bigger copy of tiny text</dd>
+      </dl>
+      <span class="folio">6</span>
+    </div>
+  </section>
+
+  <section class="spread" aria-labelledby="t-copy">
+    <div class="pg l">
+      <h2 id="t-copy">copy it, then ask.</h2>
+      <p>copy some text and press the shortcut. mallow offers to <strong>explain</strong>, <strong>summarize</strong>, <strong>translate</strong> or <strong>rewrite</strong> it, one click and no typing.</p>
+      <p>it only offers. nothing is sent until you pick one, and single words like passwords are never offered at all.</p>
+      <span class="folio">7</span>
+    </div>
+    <div class="pg r">
+      <figure class="plate nobottom" data-video="assets/video/copy.mp4" style="--band: 0px">
+        <div class="frame"><img src="assets/video/copy.jpg" alt="A French Wikipedia page with mallow's translation card showing the copied sentence in English." width="912" height="556"></div>
+        <figcaption class="cap"><span>a french sentence, translated in one click</span><button class="watch" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg><span>watch it</span></button></figcaption>
+      </figure>
+      <span class="folio">8</span>
+    </div>
+  </section>
+
+  <section class="spread" aria-labelledby="t-key">
+    <div class="pg l">
+      <h2 id="t-key">it changes with the app you're in.</h2>
+      <p>mallow knows which app is in front and answers the way that kind of work needs. it also learns what you usually ask in each app, so the suggestions when the bar opens become your own questions.</p>
+      <p>only counts and short preferences are kept, on your computer. you can see and change all of it in settings.</p>
+      <figure class="plate" data-video="assets/video/settings.mp4">
+        <div class="frame"><img src="assets/video/settings-plate.jpg" alt="mallow's settings rail open beside the bar, with answer length set to normal and the options short and detailed." width="912" height="556"></div>
+        <ol class="marks">
+          <li data-x="34.3" data-y="24" data-side="top">the settings rail</li>
+          <li data-x="62.6" data-y="48.4" data-side="top">how long answers are</li>
+          <li data-x="34.3" data-y="93.7" data-side="bottom">click mallow's face to open it</li>
+        </ol>
+        <svg class="leaders" aria-hidden="true"></svg>
+        <figcaption class="cap"><span>choosing how long answers are</span><button class="watch" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.8v8.4L10 6z" fill="currentColor"/></svg><span>watch it</span></button></figcaption>
+      </figure>
+      <span class="folio">9</span>
+    </div>
+    <div class="pg r">
+      <h3>which mallow will you get?</h3>
+      <ol class="key">
+        <li><span class="n">1</span><span class="q">writing code, in vs code or a terminal</span><span class="to">coding</span><span class="says">the fix first, then the file and the line</span></li>
+        <li><span class="n"></span><span class="q">not code</span><span class="to"><em>go to 2</em></span></li>
+        <li><span class="n">2</span><span class="q">designing, in figma or adobe</span><span class="to">design</span><span class="says">sizes, hex codes and your client's brand rules</span></li>
+        <li><span class="n"></span><span class="q">not designing</span><span class="to"><em>go to 3</em></span></li>
+        <li><span class="n">3</span><span class="q">in a spreadsheet</span><span class="to">sheets</span><span class="says">plain words and a formula ready to insert</span></li>
+        <li><span class="n"></span><span class="q">no spreadsheet</span><span class="to"><em>go to 4</em></span></li>
+        <li><span class="n">4</span><span class="q">writing a document or an email</span><span class="to">writing, mail</span><span class="says">text you can paste straight in</span></li>
+        <li class="end"><span class="n"></span><span class="q">anything else</span><span class="to">general</span><span class="says">short, plain answers about whatever's on screen</span></li>
+      </ol>
+      <span class="folio">10</span>
+    </div>
+  </section>
+
+  <section class="spread" aria-labelledby="t-index">
+    <div class="pg l">
+      <h2 id="t-index">and the small things.</h2>
+      <div class="index">
+        <div><b>copy text off the screen</b><span>circle text in an image or a locked pdf and it lands on your clipboard</span></div>
+        <div><b>every screen</b><span>works across all your monitors and points at things on any of them</span></div>
+        <div><b>follow-ups</b><span>after an answer, one or two likely next questions to click</span></div>
+        <div><b>from any app</b><span><span class="keys"><kbd>ctrl</kbd> <kbd>alt</kbd> <kbd>→</kbd></span> shows the next message while you keep working</span></div>
+        <div><b>it remembers</b><span>one ongoing conversation, so a follow-up an hour later still makes sense</span></div>
+        <div><b>pin a card</b><span>longer answers come in a card that can stay on top while you work</span></div>
+        <div><b>settings</b><span>click mallow's face or press <span class="keys"><kbd>ctrl</kbd> <kbd>,</kbd></span> for the model, shortcut, answer length and look</span></div>
+        <div><b>tell me when</b><span>ask it to keep an eye on something and it lets you know</span></div>
+        <div><b>updates</b><span>new versions download quietly and install on the next restart</span></div>
+      </div>
+      <span class="folio">11</span>
+    </div>
+    <div class="pg r" id="privacy">
+      <h2>your screen, your business.</h2>
+      <ul class="privacy">
+        <li><b>it only looks when you open it.</b> the screenshot only leaves your computer with a question you ask.</li>
+        <li><b>it stays out of your recordings.</b> mallow hides from screen capture, so it never shows up in screen shares or recordings.</li>
+        <li><b>walkthroughs stay local.</b> while it waits for your next step, it compares tiny grey copies of your screen on your computer. they're never saved or sent.</li>
+        <li><b>copied text waits for you.</b> it's only sent when you pick an action.</li>
+        <li><b>no account and no analytics.</b> your settings and history stay in your own user profile.</li>
+      </ul>
+      <span class="folio">12</span>
+    </div>
+  </section>
+
+  <section class="spread" id="start" aria-labelledby="t-start">
+    <div class="pg l">
+      <h2 id="t-start">up and running in a minute.</h2>
+      <ol class="start">
+        <li><span><b><a class="dl-link" href="https://github.com/milannetjuh/mallow-releases/releases/latest">download mallow</a></b> and open it. on windows it installs just for you, without admin rights. on a mac, drag it to applications.</span></li>
+        <li><span>it asks what you mostly do. if claude code or your claude account is missing, it sets them up right there.</span></li>
+        <li><span>it puts a small example on screen. press the shortcut, circle it and ask.</span></li>
+      </ol>
+      <p class="need"><b>you need</b> windows 10 or 11, or a mac with macos 12 or newer, and a <b>claude pro or max</b> plan.</p>
+      <span class="folio">13</span>
+    </div>
+    <div class="pg r">
+      <h2>questions.</h2>
+      <details>
+        <summary>windows says it doesn't recognise the app</summary>
+        <p>mallow isn't code-signed yet, so smartscreen warns the first time. click <b>more info</b>, then <b>run anyway</b>.</p>
+      </details>
+      <details>
+        <summary>my mac won't open it</summary>
+        <p>it isn't signed on the mac either. the first time, right-click mallow in applications and pick <b>open</b>, or go to system settings, privacy and security, <b>open anyway</b>. setup then asks for screen recording: turn mallow on there and let it reopen.</p>
+      </details>
+      <details>
+        <summary>which mac download do i need?</summary>
+        <p><b>apple silicon</b> for m1 and newer, most macs from 2021 on. <b>intel</b> for older ones. the apple menu, about this mac, shows a chip (apple silicon) or a processor (intel).</p>
+      </details>
+      <details>
+        <summary>is this made by anthropic?</summary>
+        <p>no. mallow is an independent app. it uses your own claude account through anthropic's claude code, which you install and sign in to during setup.</p>
+      </details>
+      <details>
+        <summary><span class="keys"><kbd>ctrl</kbd> <kbd>space</kbd></span> doesn't do anything</summary>
+        <p>another app, often keyboard-language switching, may already use it. mallow then picks <span class="keys"><kbd>ctrl</kbd> <kbd>shift</kbd> <kbd>space</kbd></span> and shows it during setup. you can change it in settings.</p>
+      </details>
+      <span class="folio">14</span>
+    </div>
+  </section>
+</main>
+
+<section class="back" aria-labelledby="t-back">
+  <img src="assets/icon.png" alt="" width="84" height="84">
+  <h2 id="t-back">point at it, ask, done.</h2>
+  <a class="dl dl-link" href="https://github.com/milannetjuh/mallow-releases/releases/latest">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11.5m0 0-4.6-4.6M12 15l4.6-4.6M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="dl-label">download mallow</span>
+  </a>
+  <p class="ver" id="ver"></p>
+</section>
+
+<footer>
+  <span>mallow is an independent app, not made by anthropic.</span>
+  <a href="https://github.com/milannetjuh/mallow-releases/releases">every version and its release notes</a>
+</footer>
+
+<script>
+(function () {
+  document.documentElement.classList.add('js');
+  var NS = 'http://www.w3.org/2000/svg';
+  var narrow = window.matchMedia('(max-width: 720px)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var plates = Array.prototype.slice.call(document.querySelectorAll('.plate'));
+
+  // Lay out a plate's labels above and below the screen, each over its target, and
+  // draw a leader line from the label to the spot it names.
+  function layout(fig) {
+    var frame = fig.querySelector('.frame');
+    var svg = fig.querySelector('.leaders');
+    var items = Array.prototype.slice.call(fig.querySelectorAll('.marks li'));
+    if (!items.length) return;
+    fig.querySelectorAll('.pin').forEach(function (p) { p.remove(); });
+    if (narrow.matches) {
+      items.forEach(function (li, i) {
+        li.style.left = li.style.top = '';
+        var pin = document.createElement('span');
+        pin.className = 'pin'; pin.textContent = i + 1; pin.setAttribute('aria-hidden', 'true');
+        pin.style.left = li.dataset.x + '%'; pin.style.top = li.dataset.y + '%';
+        frame.appendChild(pin);
+      });
+      return;
+    }
+    var W = fig.clientWidth, fx = frame.offsetLeft, fy = frame.offsetTop, fw = frame.offsetWidth, fh = frame.offsetHeight;
+    var GAP = 14;
+    ['top', 'bottom'].forEach(function (side) {
+      var row = items.filter(function (li) { return li.dataset.side === side; })
+        .sort(function (a, b) { return a.dataset.x - b.dataset.x; });
+      var placed = row.map(function (li) {
+        var w = Math.min(li.scrollWidth + 1, 168);
+        li.style.width = w + 'px';
+        var cx = fx + fw * li.dataset.x / 100;
+        return { li: li, w: w, left: Math.max(0, Math.min(W - w, cx - w / 2)) };
+      });
+      for (var i = 1; i < placed.length; i++) placed[i].left = Math.max(placed[i].left, placed[i - 1].left + placed[i - 1].w + GAP);
+      for (var j = placed.length - 1; j >= 0; j--) {
+        var maxLeft = (j === placed.length - 1 ? W : placed[j + 1].left - GAP) - placed[j].w;
+        placed[j].left = Math.min(placed[j].left, maxLeft);
+      }
+      placed.forEach(function (p) {
+        p.li.style.left = p.left + 'px';
+        if (side === 'bottom') p.li.style.top = (fy + fh + 18) + 'px';
+      });
+    });
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    items.forEach(function (li, i) {
+      var tx = fx + fw * li.dataset.x / 100, ty = fy + fh * li.dataset.y / 100;
+      var top = li.dataset.side === 'top';
+      var lx = Math.max(li.offsetLeft + 6, Math.min(li.offsetLeft + li.offsetWidth - 6, tx));
+      var ly = top ? li.offsetTop + li.offsetHeight + 6 : li.offsetTop - 6;
+      var line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', lx); line.setAttribute('y1', ly); line.setAttribute('x2', tx); line.setAttribute('y2', ty);
+      var len = Math.hypot(tx - lx, ty - ly);
+      line.style.setProperty('--len', len.toFixed(1));
+      line.style.setProperty('--d', (i * 110) + 'ms');
+      var ring = document.createElementNS(NS, 'circle'); ring.setAttribute('class', 'ring'); ring.setAttribute('cx', tx); ring.setAttribute('cy', ty); ring.setAttribute('r', 4.5);
+      var core = document.createElementNS(NS, 'circle'); core.setAttribute('class', 'core'); core.setAttribute('cx', tx); core.setAttribute('cy', ty); core.setAttribute('r', 1.75);
+      [ring, core].forEach(function (c) { c.style.setProperty('--d2', (i * 110 + 380) + 'ms'); });
+      li.style.setProperty('--d2', (i * 110 + 300) + 'ms');
+      svg.appendChild(line); svg.appendChild(ring); svg.appendChild(core);
+      li.onmouseenter = function () { li.classList.add('lit'); ring.style.strokeWidth = '2.25'; line.style.strokeWidth = '2'; };
+      li.onmouseleave = function () { li.classList.remove('lit'); ring.style.strokeWidth = ''; line.style.strokeWidth = ''; };
+    });
+  }
+  function layoutAll() { plates.forEach(layout); }
+  layoutAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutAll);
+  window.addEventListener('resize', function () { clearTimeout(layoutAll.t); layoutAll.t = setTimeout(layoutAll, 80); });
+
+  // The one authored motion: each plate's leaders draw in as it comes into view.
+  if (reduced || !('IntersectionObserver' in window)) plates.forEach(function (p) { p.classList.add('drawn'); });
+  else {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('drawn'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -18% 0px' });
+    plates.forEach(function (p) { io.observe(p); });
+  }
+
+  // "watch it": the still becomes the moving demo, labels step aside until it ends.
+  plates.forEach(function (fig) {
+    var btn = fig.querySelector('.watch');
+    if (!btn) return;
+    var label = btn.querySelector('span');
+    var video;
+    function stop() { fig.classList.remove('playing'); label.textContent = 'watch it'; if (video) video.pause(); }
+    btn.addEventListener('click', function () {
+      if (fig.classList.contains('playing')) { stop(); return; }
+      if (!video) {
+        video = document.createElement('video');
+        video.src = fig.dataset.video; video.muted = true; video.playsInline = true; video.preload = 'auto';
+        video.setAttribute('aria-hidden', 'true');
+        video.addEventListener('ended', stop);
+        fig.querySelector('.frame').appendChild(video);
+      }
+      video.currentTime = 0;
+      var p = video.play(); if (p && p.catch) p.catch(stop);
+      fig.classList.add('playing'); label.textContent = 'stop';
+    });
+  });
+
+  // The download for this computer, straight from the latest release.
+  var ua = navigator.userAgent || '', pf = navigator.platform || '';
+  var touch = /Android|iPhone|iPad|Mobile/.test(ua);
+  var os = touch ? 'other' : /Mac/.test(pf || ua) ? 'mac' : /Win/.test(pf || ua) ? 'windows' : 'other';
+  var name = { windows: 'download for windows', mac: 'download for mac' }[os];
+  if (name) document.querySelectorAll('.dl-label').forEach(function (s) { s.textContent = name; });
+  fetch('https://api.github.com/repos/milannetjuh/mallow-releases/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (rel) {
+      if (!rel || !rel.assets) return;
+      var find = function (re) { var a = rel.assets.filter(function (x) { return re.test(x.name); })[0]; return a && a.browser_download_url; };
+      var win = find(/^mallow-setup-.*\.exe$/), arm = find(/mac-arm64\.dmg$/), x64 = find(/mac-x64\.dmg$/);
+      var v = (rel.tag_name || '').replace(/^v/, '');
+      var direct = os === 'windows' ? win : os === 'mac' ? arm : null;
+      if (direct) document.querySelectorAll('.dl-link').forEach(function (a) { a.href = direct; });
+      var link = function (href, text) { return href ? '<a href="' + href + '">' + text + '</a>' : ''; };
+      var others = os === 'windows' ? [link(arm, 'mac with apple silicon'), link(x64, 'intel mac')]
+        : os === 'mac' ? [link(x64, 'intel mac'), link(win, 'windows')]
+        : [link(win, 'windows'), link(arm, 'mac with apple silicon'), link(x64, 'intel mac')];
+      document.getElementById('plan').innerHTML = 'free, version ' + v + '. it runs on your own claude pro or max plan, so there\'s no api key and nothing extra to pay. also for ' + others.filter(Boolean).join(' and ') + '.';
+      document.getElementById('ver').textContent = 'version ' + v;
+    })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>
